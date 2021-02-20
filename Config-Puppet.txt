@@ -1,0 +1,131 @@
+What is Puppet
+Puppet Architecture
+
+
+What is Puppet
+-- puppet is an open source software configuration management tool.
+It runs on many unix-like systems as well as MIcrosoft Windows, and includes its own
+declarative languages to describe system configuration.
+
+What we requires on system 
+
+Own declarative format 
+
+Keyfeatures 
+1. Large User base
+2. Big open Source Community
+3. Documentation
+4. Platform Support
+
+Puppet Architecture 
+
+Puppet follows a Master Slave Architecure, 
+puppet master 
+
+puppet slave
+
+SSL Connection
+
+Puppet nodes have to interact with the master, all the information which is communicated between the master node
+and the slave node are encrypted using SSL certficates, The certificate signing process is as follows
+
+Puppet master ---------------------------------> puppet slave
+puppet master <-------------------------------- puppet slave
+puppet master ---------------------------------> puppet slave
+puppet master <--------------------------------> pupper slave
+
+
+Set up
+---------
+[master]
+-apt update    apt --- install := > command
+-apt-get install wget
+wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+sudo dpkg -i puppet-release-bionic.deb  ---> unZip the file downloaded
+sudo apt-get install puppetmaster ---> Install the puppetmaster
+
+sudo apt policy puppetmaster --> Check the policy of puppet master
+
+sudo systemctl status puppet-master.service -->
+status of puppermaster service --- Whether it is enable or disable 
+---Ubuntu base machine started connecting ot not???????????
+
+
+vim /etc/default/puppet-master ---> 
+
+-------> nano -- edit ----> shell scripting
+------> vim -----> edit -----> shell scripting
+JAVA_ARGS="-Xms512m -Xms512m"
+
+Jenkins ---> CI/CD=====> Integration <----- develpoing
+puppet ---> OPS -------------> Configuartion <--------Deployem <----maintian
+JAVA programming progamming
+puppet ruby dsl
+
+1gb of memory --> 512 memory
+--JAVA_ARGS="-Xms512m - Xmx512m"
+
+bydefaulr the device uses 1 gb of memroy ====> system is gonna be on 
+overload, hence it has to be shorten\
+
+sudo systemctl restart puppet-master.service
+
+sudo ufw allow 8140/tcp
+
+localhost:8080
+
+8140 ===> default port number running our puppetserver (Puppet service)
+
+
+
+
+
+
+Slave machine -- Puppet agent
+=---------------------
+//Puppet agent
+sudo apt-get update
+sudo apt-get install wget
+wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+sudo dpkg -i puppet-release-bionic.deb
+sudo apt-get install puppet
+
+enter IP address of master machine
+sudo nano /etc/hosts --> IP Address of the master puppet - server
+
+Note : Master IP addess needs to copied into master pupper-sever 
+as well as puppet agent-server.
+
+#Before this command...
+sudo systemctl start puppet
+sudo systemctl enable puppet
+
+//on puppet master
+sudo puppet cert list
+sudo puppet cert sign --all
+
+To verify now!!!
+Create 
+
+Manifest --> What all chages has to be made slave
+
+//Change mode
+
+--Master Server-----
+
+mkdir -p /etc/puppet/code/environments/production/manifests/
+
+nano /etc/puppet/code/environments/production/manifest/site.pp
+
+<Deployement Acitvity>
+----------------------------------------------
+file {'/tmp/it_works.txt'; 	#resource type file and filename
+    ensure => present,	#make sure it exists
+    mode =>'0644',		#file permissions
+    content => "It works on ${ipaddress_eth0}!\n", #Print the eth0 IP fact
+}
+
+---> Save
+systemctl restart puppet-master.service
+
+sudo puppet agent --test
